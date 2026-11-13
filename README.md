@@ -1,16 +1,28 @@
-# vitasnap
+# VitaSnap
 
-A new Flutter project.
+A local Flutter 3 / Material 3 nutrition demo with Provider state management. No API key, backend, or network connection is needed at runtime.
 
-## Getting Started
+## Run
 
-This project is a starting point for a Flutter application.
+```sh
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+Choose either one-tap demo profile on the login screen. The email and password form is a local UI simulation: any valid email and nonempty password open a generic profile. Credentials are never stored or sent.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Demo flow
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Enter as User A or User B.
+2. Tap the white shutter to view a mock nutrition result.
+3. Tap **Lưu & Chia sẻ lên Feed** to add the phở card to the local feed.
+4. Use the bottom tabs for the feed and dashboard. Tap the user pill on the camera screen to switch profiles or sign out.
+
+Food photos, nutrition numbers, activity calories, and coach suggestions are bundled mock content. The camera viewfinder does not access the device camera. Shared posts exist in memory for the current session.
+
+## Verify
+
+```sh
+flutter analyze
+flutter test
+```

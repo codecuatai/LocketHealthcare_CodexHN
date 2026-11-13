@@ -9,18 +9,28 @@ class AuthProvider extends ChangeNotifier {
   // Local UI sign-in only: credentials are never stored or transmitted.
   void login(String email, String password) {
     final normalized = email.trim();
-    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(normalized) || password.isEmpty) {
+    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(normalized) ||
+        password.isEmpty) {
       throw const FormatException('Nhập email hợp lệ và mật khẩu.');
     }
-    _currentUser = UserModel(name: normalized.split('@').first, age: 0,
-      weightKg: 0, conditions: const [], targetKcal: 2000, goal: 'Cân bằng');
+    _currentUser = UserModel(
+        name: normalized.split('@').first,
+        age: 0,
+        weightKg: 0,
+        conditions: const [],
+        targetKcal: 2000,
+        goal: 'Cân bằng');
     notifyListeners();
   }
 
-  void logout() { _currentUser = null; notifyListeners(); }
+  void logout() {
+    _currentUser = null;
+    notifyListeners();
+  }
 
   void switchDemoUser(DemoPreset preset) {
-    _currentUser = preset == DemoPreset.userA ? UserModel.demoA : UserModel.demoB;
+    _currentUser =
+        preset == DemoPreset.userA ? UserModel.demoA : UserModel.demoB;
     notifyListeners();
   }
 }
