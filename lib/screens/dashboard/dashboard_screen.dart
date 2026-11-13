@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_styles.dart';
-import '../../core/models/user_model.dart';
-import '../../providers/auth_provider.dart';
+import '../../core/models/profile.dart';
+import '../../providers/auth_controller.dart';
 import '../../widgets/custom_pill.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -34,19 +34,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().currentUser!;
-    final isA = user.preset == DemoPreset.userA;
-    final intake = isA
-        ? 1450
-        : user.preset == DemoPreset.userB
-            ? 2100
-            : 1450;
-    final burned = (isA
-            ? 1820
-            : user.preset == DemoPreset.userB
-                ? 2300
-                : 1820) +
-        _extraBurned;
+    final user = context.watch<AuthController>().profile!;
+    final buildingMuscle = user.goal == HealthGoal.gainMuscle;
+    final intake = buildingMuscle ? 2100 : 1450;
+    final burned = (buildingMuscle ? 2300 : 1820) + _extraBurned;
     final balance = intake - burned;
     return SafeArea(
         child: ListView(
@@ -54,7 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
           const Text('Tổng quan', style: AppStyles.heading),
           const SizedBox(height: 5),
-          Text('Mục tiêu: ${user.targetKcal} kcal · ${user.goal}',
+          Text('Mục tiêu: ${user.effectiveTargetKcal} kcal · ${user.goalLabel}',
               style: AppStyles.bodySmall),
           const SizedBox(height: 27),
           Container(
@@ -146,9 +137,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ]),
                     const SizedBox(height: 14),
                     Text(
-                        isA
+                        user.conditions.contains(MedicalCondition.jointPain)
                             ? 'Khớp gối cần nghỉ: Hôm nay hãy ĐẠP XE TĨNH 20 PHÚT thay vì chạy bộ.'
-                            : 'Để hỗ trợ mục tiêu tăng cơ, hãy bổ sung một bữa giàu protein sau buổi tập.',
+                            : buildingMuscle
+                                ? 'Để hỗ trợ mục tiêu tăng cơ, hãy bổ sung một bữa giàu protein sau buổi tập.'
+                                : 'Đi bộ nhanh 30 phút hôm nay để giữ nhịp vận động đều đặn.',
                         style: const TextStyle(
                             color: AppColors.white,
                             fontSize: 16,

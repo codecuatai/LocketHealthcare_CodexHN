@@ -41,3 +41,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Cấu hình backend thật (xem docs/setup-backend.md)
+/env/*.json
+!/env/*.example.json

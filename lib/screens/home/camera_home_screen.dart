@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_styles.dart';
 import '../../core/models/nutrition_model.dart';
-import '../../core/models/user_model.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/auth_controller.dart';
 import '../../widgets/custom_pill.dart';
 import 'ai_result_sheet.dart';
 
@@ -14,7 +13,9 @@ class CameraHomeScreen extends StatelessWidget {
   final VoidCallback onShare;
   final VoidCallback onActivity;
 
-  void _showSwitcher(BuildContext context) {
+  void _showAccount(BuildContext context) {
+    final controller = context.read<AuthController>();
+    final profile = controller.profile!;
     showModalBottomSheet<void>(
         context: context,
         showDragHandle: true,
@@ -28,42 +29,19 @@ class CameraHomeScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Đổi hồ sơ', style: AppStyles.title),
-                      const SizedBox(height: 8),
-                      const Text('Xem gợi ý cá nhân hóa cho từng người.',
-                          style: AppStyles.bodySmall),
+                      Text(profile.displayName, style: AppStyles.title),
+                      const SizedBox(height: 4),
+                      Text(profile.email, style: AppStyles.bodySmall),
                       const SizedBox(height: 16),
-                      _profileTile(
-                          sheetContext, DemoPreset.userA, UserModel.demoA),
-                      _profileTile(
-                          sheetContext, DemoPreset.userB, UserModel.demoB),
-                      const SizedBox(height: 8),
                       TextButton.icon(
                           onPressed: () {
                             Navigator.pop(sheetContext);
-                            context.read<AuthProvider>().logout();
+                            controller.signOut();
                           },
                           icon: const Icon(Icons.logout, size: 18),
                           label: const Text('Đăng xuất')),
                     ]))));
   }
-
-  Widget _profileTile(
-          BuildContext sheetContext, DemoPreset preset, UserModel user) =>
-      ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: CircleAvatar(
-              backgroundColor: AppColors.mint.withOpacity(.14),
-              child: const Icon(Icons.person, color: AppColors.mint)),
-          title: Text(user.name),
-          subtitle: Text(user.preset == DemoPreset.userA
-              ? 'Khớp gối + Huyết áp · 1.800 kcal'
-              : 'Gymmer · 2.600 kcal'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {
-            sheetContext.read<AuthProvider>().switchDemoUser(preset);
-            Navigator.pop(sheetContext);
-          });
 
   void _snap(BuildContext context) => showModalBottomSheet<void>(
         context: context,
@@ -80,7 +58,7 @@ class CameraHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().currentUser!;
+    final user = context.watch<AuthController>().profile!;
     return SafeArea(
         child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 22),
@@ -88,26 +66,20 @@ class CameraHomeScreen extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Center(
                   child: CustomPill(
-                      onTap: () => _showSwitcher(context),
+                      onTap: () => _showAccount(context),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         const Icon(Icons.person_outline,
                             color: AppColors.mint, size: 18),
                         const SizedBox(width: 7),
                         Flexible(
-                            child: Text(
-                                user.preset == DemoPreset.userA
-                                    ? '${user.name} (Khớp gối)'
-                                    : user.name,
+                            child: Text(user.displayName,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 12))),
-                        const SizedBox(width: 7),
-                        const Text('· Đổi',
-                            style: TextStyle(
-                                color: AppColors.mint,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12)),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.expand_more,
+                            color: AppColors.mint, size: 16),
                       ]))),
               const SizedBox(height: 25),
               const Text('Chụp bữa ăn', style: AppStyles.heading),

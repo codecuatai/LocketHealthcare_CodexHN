@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_styles.dart';
 import '../../core/models/nutrition_model.dart';
-import '../../providers/auth_provider.dart';
+import '../../core/models/profile.dart';
+import '../../providers/auth_controller.dart';
 import '../../widgets/macro_bar.dart';
 
 class AiResultSheet extends StatelessWidget {
@@ -11,7 +12,7 @@ class AiResultSheet extends StatelessWidget {
   final VoidCallback onShare;
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().currentUser!;
+    final user = context.watch<AuthController>().profile!;
     const food = NutritionModel.phoBoTai;
     return SafeArea(
         child: FractionallySizedBox(
@@ -107,8 +108,10 @@ class AiResultSheet extends StatelessWidget {
                                       const SizedBox(width: 12),
                                       Expanded(
                                           child: Text(
-                                              user.hasMedicalConditions
-                                                  ? 'Khớp & Huyết áp: Hạn chế húp cạn nước dùng (chứa nhiều Natri).'
+                                              user.conditions.contains(
+                                                      MedicalCondition
+                                                          .hypertension)
+                                                  ? 'Huyết áp cao: Hạn chế húp cạn nước dùng (chứa nhiều Natri).'
                                                   : 'Gợi ý: Thêm rau và một phần đạm để cân bằng bữa ăn.',
                                               style: const TextStyle(
                                                   color: AppColors.white,

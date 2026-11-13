@@ -1,28 +1,28 @@
 # VitaSnap
 
-A local Flutter 3 / Material 3 nutrition demo with Provider state management. No API key, backend, or network connection is needed at runtime.
+Mạng xã hội chia sẻ Khoảnh khắc ăn uống và vận động với bạn bè, kèm AI phân tích calo và cá nhân hóa theo bệnh lý nền. Viết bằng Flutter, dùng Provider.
 
-## Run
+- **Tài khoản**: Firebase Authentication (email/mật khẩu, Google).
+- **Hồ sơ và ảnh**: Supabase (Postgres + Storage, bảo vệ bằng RLS).
+
+Thuật ngữ nằm trong [`GLOSSARY.md`](GLOSSARY.md), các quyết định kiến trúc nằm trong [`docs/adr/`](docs/adr/).
+
+## Chạy
+
+Lần đầu, làm theo [`docs/setup-backend.md`](docs/setup-backend.md) để tạo project Firebase và Supabase. Sau đó:
 
 ```sh
 flutter pub get
-flutter run
+flutter run --dart-define-from-file=env/dev.json
 ```
 
-Choose either one-tap demo profile on the login screen. The email and password form is a local UI simulation: any valid email and nonempty password open a generic profile. Credentials are never stored or sent.
+Các màn Camera, Feed và Dashboard vẫn dùng dữ liệu mẫu. Chỉ phần đăng nhập và Hồ sơ là dữ liệu thật.
 
-## Demo flow
-
-1. Enter as User A or User B.
-2. Tap the white shutter to view a mock nutrition result.
-3. Tap **Lưu & Chia sẻ lên Feed** to add the phở card to the local feed.
-4. Use the bottom tabs for the feed and dashboard. Tap the user pill on the camera screen to switch profiles or sign out.
-
-Food photos, nutrition numbers, activity calories, and coach suggestions are bundled mock content. The camera viewfinder does not access the device camera. Shared posts exist in memory for the current session.
-
-## Verify
+## Kiểm tra
 
 ```sh
 flutter analyze
 flutter test
 ```
+
+Test dùng repository giả (`test/fakes.dart`), nên không cần mạng hay cấu hình backend.
