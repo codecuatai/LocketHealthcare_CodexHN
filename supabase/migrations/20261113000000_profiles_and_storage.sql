@@ -59,6 +59,12 @@ create trigger profiles_touch_updated_at
 
 alter table public.profiles enable row level security;
 
+-- RLS chỉ lọc dòng; role vẫn phải có quyền trên bảng. Project Supabase mới
+-- không tự cấp quyền cho bảng tạo bằng SQL, thiếu dòng này thì mọi request
+-- bị từ chối với lỗi 42501. Không cấp delete (xem ghi chú bên dưới).
+grant select, insert, update on table public.profiles to anon;
+grant execute on function public.firebase_uid() to anon;
+
 drop policy if exists "profiles: owner reads" on public.profiles;
 create policy "profiles: owner reads" on public.profiles
   for select to anon

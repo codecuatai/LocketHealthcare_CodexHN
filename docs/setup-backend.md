@@ -80,5 +80,6 @@ Nếu thiếu cấu hình, app hiện màn **"Chưa cấu hình backend"** kèm 
 | Build báo `File google-services.json is missing` | Chưa đặt file vào `android/app/` (bước 1.5). |
 | Build báo thiếu NDK | Chưa cài NDK 28.2.13676358 (bước 0). |
 | Đăng nhập Firebase được nhưng hiện "Chưa tải được hồ sơ" | Chưa thêm Firebase vào Third-Party Auth của Supabase (bước 2.3), hoặc chưa chạy SQL (bước 2.2). |
+| Log báo `42501 permission denied for table profiles` | Đã chạy bản SQL cũ chưa có lệnh `grant`. Chạy lại toàn bộ file SQL (bước 2.2). |
 | Bấm Google báo "chưa hỗ trợ" hoặc không có gì xảy ra | Thiếu SHA-1 (bước 1.5/1.6) hoặc thiếu `GOOGLE_SERVER_CLIENT_ID`. |
 | `Building with plugins requires symlink support` | Chưa bật Developer Mode (bước 0). |
