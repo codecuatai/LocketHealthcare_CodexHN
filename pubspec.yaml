@@ -29,6 +29,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/moments/
+    - assets/images/samples/
 
   fonts:
     - family: Chivo

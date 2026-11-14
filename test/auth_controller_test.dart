@@ -152,35 +152,18 @@ void main() {
   });
 
   group('Profile', () {
-    test('parses a Supabase row and ignores unknown conditions', () {
+    test('parses identity fields and ignores health columns', () {
       final profile = Profile.fromJson({
         'id': 'u1',
         'email': 'lan@gmail.com',
         'display_name': 'Lan',
         'avatar_url': null,
         'birth_year': 1994,
-        'height_cm': 162.5,
-        'weight_kg': 54,
-        'goal': 'lose_fat',
-        'conditions': ['hypertension', 'not_a_condition'],
-        'target_kcal': 1800,
+        'conditions': ['hypertension'],
       });
-      expect(profile.goal, HealthGoal.loseFat);
-      expect(profile.conditions, [MedicalCondition.hypertension]);
-      expect(profile.weightKg, 54.0);
-      expect(profile.effectiveTargetKcal, 1800);
-    });
-
-    test('falls back to safe defaults before onboarding', () {
-      final profile = Profile.fromJson({
-        'id': 'u1',
-        'email': 'lan@gmail.com',
-        'display_name': 'Lan',
-        'conditions': <String>[],
-      });
-      expect(profile.hasMedicalConditions, isFalse);
-      expect(profile.effectiveTargetKcal, Profile.defaultTargetKcal);
-      expect(profile.goalLabel, 'Chưa đặt mục tiêu');
+      expect(profile.id, 'u1');
+      expect(profile.displayName, 'Lan');
+      expect(profile.avatarUrl, isNull);
     });
   });
 

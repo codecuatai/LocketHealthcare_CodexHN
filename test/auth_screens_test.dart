@@ -176,7 +176,10 @@ void main() {
       await tester.enterText(field('register-password'), 'abc12345');
       await tester.tap(find.widgetWithText(VitaPrimaryButton, 'Tạo tài khoản'));
       await tester.pumpAndSettle();
-      expect(find.text('Chụp bữa ăn'), findsOneWidget);
+      expect(find.text('Chụp món ăn, đồ uống hoặc lúc cậu vận động'),
+          findsOneWidget);
+      await tester.tap(find.bySemanticsLabel('Cá nhân'));
+      await tester.pumpAndSettle();
       expect(find.text('Thảo Vy'), findsOneWidget);
     });
 

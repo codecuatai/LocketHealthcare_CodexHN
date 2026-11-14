@@ -3,19 +3,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'core/config/app_config.dart';
-import 'core/constants/app_colors.dart';
-import 'core/constants/app_styles.dart';
+import 'core/theme/vita_theme.dart';
+import 'data/app_services.dart';
 import 'data/auth/auth_repository.dart';
 import 'data/auth/firebase_auth_repository.dart';
 import 'data/intro/intro_store.dart';
 import 'data/profile/profile_repository.dart';
 import 'providers/auth_controller.dart';
+import 'providers/session_scope.dart';
 import 'screens/auth/auth_flow.dart';
 import 'screens/auth/auth_gate_screens.dart';
-import 'screens/dashboard/dashboard_screen.dart';
-import 'screens/feed/social_feed_screen.dart';
-import 'screens/home/camera_home_screen.dart';
+import 'screens/shell/session_navigator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,58 +59,24 @@ class VitaSnapApp extends StatelessWidget {
     required this.auth,
     required this.profiles,
     required this.introStore,
+    this.createServices = AppServices.demo,
   });
+
   final AuthRepository auth;
   final ProfileRepository profiles;
   final IntroStore introStore;
+
+  /// Dữ liệu của mỗi phiên đăng nhập. Hiện là bản demo trong bộ nhớ (Bảng
+  /// tin, Nhật ký, AI...); Tài khoản và Hồ sơ đã là dữ liệu thật.
+  final AppServices Function() createServices;
+
   @override
-  Widget build(BuildContext context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-              create: (_) => AuthController(auth: auth, profiles: profiles))
-        ],
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+        create: (_) => AuthController(auth: auth, profiles: profiles),
         child: MaterialApp(
           title: 'VitaSnap',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            useMaterial3: true,
-            brightness: Brightness.dark,
-            scaffoldBackgroundColor: AppColors.background,
-            colorScheme: const ColorScheme.dark(
-                primary: AppColors.mint,
-                onPrimary: AppColors.background,
-                surface: AppColors.surface,
-                onSurface: AppColors.white,
-                secondary: AppColors.amber,
-                error: AppColors.rose),
-            textTheme: const TextTheme(
-                displayLarge: AppStyles.display,
-                headlineMedium: AppStyles.heading,
-                titleLarge: AppStyles.title,
-                bodyLarge: AppStyles.body,
-                bodyMedium: AppStyles.bodySmall),
-            inputDecorationTheme: InputDecorationTheme(
-                filled: true,
-                fillColor: AppColors.surface,
-                hintStyle: const TextStyle(color: AppColors.muted),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: AppColors.border)),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: AppColors.border))),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-                style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(56),
-                    backgroundColor: AppColors.mint,
-                    foregroundColor: AppColors.background,
-                    textStyle: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w700),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)))),
-          ),
+          theme: vitaTheme(),
           home: Consumer<AuthController>(
               builder: (_, auth, __) => switch (auth.status) {
                     AuthStatus.initializing ||
@@ -118,55 +84,13 @@ class VitaSnapApp extends StatelessWidget {
                       const AuthSplashScreen(),
                     AuthStatus.signedOut => AuthFlow(introStore: introStore),
                     AuthStatus.profileError => const ProfileErrorScreen(),
-                    AuthStatus.signedIn =>
-                      VitaSnapShell(key: ValueKey(auth.profile!.id)),
+                    AuthStatus.signedIn => SessionScope(
+                        key: ValueKey(auth.profile!.id),
+                        profile: auth.profile!,
+                        createServices: createServices,
+                        child: const SessionNavigator(),
+                      ),
                   }),
-        ),
-      );
-}
-
-class VitaSnapShell extends StatefulWidget {
-  const VitaSnapShell({super.key});
-  @override
-  State<VitaSnapShell> createState() => _VitaSnapShellState();
-}
-
-class _VitaSnapShellState extends State<VitaSnapShell> {
-  int _tab = 0;
-  bool _hasSharedPho = false;
-  void _sharePho() => setState(() {
-        _hasSharedPho = true;
-        _tab = 1;
-      });
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: IndexedStack(index: _tab, children: [
-          CameraHomeScreen(
-              onShare: _sharePho, onActivity: () => setState(() => _tab = 2)),
-          SocialFeedScreen(hasSharedPho: _hasSharedPho),
-          const DashboardScreen(),
-        ]),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _tab,
-          onDestinationSelected: (index) => setState(() => _tab = index),
-          backgroundColor: AppColors.surface,
-          indicatorColor: AppColors.mint.withOpacity(.15),
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
-            NavigationDestination(
-                icon: Icon(Icons.camera_alt_outlined),
-                selectedIcon: Icon(Icons.camera_alt),
-                label: 'Chụp ảnh'),
-            NavigationDestination(
-                icon: Icon(Icons.grid_view_outlined),
-                selectedIcon: Icon(Icons.grid_view_rounded),
-                label: 'Khoảnh khắc'),
-            NavigationDestination(
-                icon: Icon(Icons.donut_large_outlined),
-                selectedIcon: Icon(Icons.donut_large),
-                label: 'Tổng quan'),
-          ],
         ),
       );
 }

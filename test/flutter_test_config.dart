@@ -25,5 +25,14 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
     'SpaceGrotesk-SemiBold.ttf',
     'SpaceGrotesk-Bold.ttf',
   ]);
+  // Icon Material (có sẵn trong Flutter SDK) để ảnh chụp test hiện đúng icon.
+  final root = Platform.environment['FLUTTER_ROOT'];
+  final icons = File(
+      '$root/bin/cache/artifacts/material_fonts/materialicons-regular.otf');
+  if (root != null && icons.existsSync()) {
+    final loader = FontLoader('MaterialIcons')
+      ..addFont(Future.value(ByteData.view(icons.readAsBytesSync().buffer)));
+    await loader.load();
+  }
   await testMain();
 }

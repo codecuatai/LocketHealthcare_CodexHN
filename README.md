@@ -16,7 +16,11 @@ flutter pub get
 flutter run --dart-define-from-file=env/dev.json
 ```
 
-Các màn Camera, Feed và Dashboard vẫn dùng dữ liệu mẫu. Chỉ phần đăng nhập và Hồ sơ là dữ liệu thật.
+Chỉ phần đăng nhập và Hồ sơ là dữ liệu thật. Sau khi đăng nhập, app có ba tab **Bảng tin · Chụp · Nhật ký** và màn **Cá nhân** (mở bằng avatar), tất cả chạy trên dữ liệu demo trong bộ nhớ:
+
+- Mỗi chức năng có một repository dạng interface trong `lib/data/` (AI đọc ảnh, Nhật ký, Khoảnh khắc, Tin nhắn, Bạn bè, Thông tin sức khỏe, AI Coach), kèm bản demo. Nối backend là thay từng bản demo trong `AppServices` (`lib/data/app_services.dart`).
+- Camera chưa nối máy ảnh thật: khung ngắm hiện ảnh mẫu trong `assets/images/samples/`, vuốt ngang để đổi; nút thư viện chọn ảnh mẫu. Ảnh bàn làm việc và chai nước dùng để thử ảnh bị từ chối và ảnh vùng xám.
+- Thông tin sức khỏe tách khỏi Hồ sơ (xem `GLOSSARY.md`) và hiện chỉ lưu trong bộ nhớ.
 
 ## Kiểm tra
 
